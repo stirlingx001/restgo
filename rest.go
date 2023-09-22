@@ -28,16 +28,12 @@ func Post(url string, req, resp interface{}) error {
 	}
 	request.Header.Set("Content-Type", "application/json")
 	return do(request, resp)
-
 }
 
 func do(req *http.Request, resp interface{}) error {
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
-	}
-	if res.StatusCode != http.StatusOK {
-		return errors.New(res.Status)
 	}
 	defer res.Body.Close()
 
@@ -46,8 +42,8 @@ func do(req *http.Request, resp interface{}) error {
 		return err
 	}
 	err = json.Unmarshal(data, resp)
-	if err != nil {
-		return err
+	if res.StatusCode != http.StatusOK {
+		return errors.New(res.Status)
 	}
-	return nil
+	return err
 }
